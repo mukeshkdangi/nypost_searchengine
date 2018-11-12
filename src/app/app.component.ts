@@ -84,8 +84,12 @@ export class AppComponent {
     this.http.get<any>(this.url).subscribe(data => {
       this.searchResponse = data.response;
       this.searchResponse.docs.forEach(element => {
-        let id2 = element.id.replace("/Users/mukesh/Office/Tools/Solr/solr-7.5.0/nypost/nypost/", "");
-        element.generator[0] = this.urlToHtmlMap.get(id2)
+        if (element.og_url && element.og_url.length > 0) {
+          element.generator[0] = element.og_url[0];
+        } else {
+          let id2 = element.id.replace("/Users/mukesh/Office/Tools/Solr/solr-7.5.0/nypost/nypost/", "");
+          element.generator[0] = this.urlToHtmlMap.get(id2)
+        }
       });
       this.stats = data.responseHeader;
       console.log(this.searchResponse)

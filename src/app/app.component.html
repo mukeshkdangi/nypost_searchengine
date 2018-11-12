@@ -60,7 +60,7 @@
       <tbody>
         <tr *ngIf="docInfo.title">
           <td style="padding: 0;">
-            Title : <a href="" target="_blank"> {{docInfo.title[0]}}</a>
+            Title : <a href="{{docInfo.generator[0]}}" target="_blank"> {{docInfo.title[0]}}</a>
           </td>
         </tr>
 
@@ -79,13 +79,13 @@
           </td>
         </tr>
 
-        <tr *ngIf="docInfo.description">
+        <tr *ngIf="docInfo.og_description">
           <td style="padding: 0;">
-            Description : {{docInfo.description[0]}}
+            Description : {{docInfo.og_description[0]}}
           </td>
         </tr>
 
-        <tr *ngIf="!docInfo.description">
+        <tr *ngIf="!docInfo.og_description">
           <td style="padding: 0;">
             Description : N/A
           </td>
