@@ -4,6 +4,7 @@ import { ResultService } from './result.service';
 import { HttpClient } from '@angular/common/http';
 import { CustomeFadeInAnimation } from './CustomeFadeInAnimation';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -33,11 +34,30 @@ export class AppComponent {
   public url: string
   searchResponse: any
   stats: any
+  searchFinished: any
 
   public show: number = 10;
 
+  urlToHtmlMap: Map<string, string> = new Map<string, string>();
+
   ngOnInit() {
-    this.searchResponse = undefined
+    this.getURl2HTML();
+
+  }
+  getURl2HTML(): any {
+    this.service.url = '/api/csvjson/'
+    console.log('hitting url ..', this.service.url)
+    this.http.get<any>(this.service.url).subscribe(data => {
+      console.log(data)
+      data.forEach(element => {
+        this.urlToHtmlMap.set(element.docid, element.url);
+      });
+      console.log(this.urlToHtmlMap);
+    });
+  }
+
+  getURL(id): any {
+    return this.urlToHtmlMap.get(id);
   }
 
   constructor(private service: ResultService,
@@ -45,11 +65,11 @@ export class AppComponent {
   }
 
   onSubmit() {
-    this.searchResponse = undefined
+    this.searchFinished = false;
     this.url = '/api/getresult?keyword=' + this.form.keyword + '&rows=50';
 
     console.log('form is ', this.form)
-    if (!this.form.isUserInput) {
+    if (this.form.isUserInput) {
       this.url = this.url + '&sort=pageRankFile%20desc'
     }
 
@@ -57,8 +77,13 @@ export class AppComponent {
     console.log('hitting url ..', this.service.url)
     this.http.get<any>(this.url).subscribe(data => {
       this.searchResponse = data.response;
+      this.searchResponse.docs.forEach(element => {
+        let id2 = element.id.replace("/Users/mukesh/Office/Tools/Solr/solr-7.5.0/nypost/nypost/", "");
+        element.generator[0] = this.urlToHtmlMap.get(id2)
+      });
       this.stats = data.responseHeader;
       console.log(this.searchResponse)
+      this.searchFinished = true;
     });
   }
 
@@ -74,7 +99,6 @@ export class AppComponent {
   updateUnitName($event) {
     if ($event.options[$event.selectedIndex]) {
     }
-
   }
 
 

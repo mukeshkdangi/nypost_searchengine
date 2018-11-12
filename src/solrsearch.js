@@ -6,14 +6,31 @@ var client = new SolrNode({
     protocol: 'http'
 });
 const express = require('express');
+const csv = require('csvtojson')
 const app = express();
 //app.use(cors());
 app.set('json spaces', 40);
 app.use(express.static(__dirname + '/public'));
+let HashMap = require('hashmap');
+let urlToHtmlMap = new HashMap();
+
+app.use('/api/csvjson/', (req, res) => {
+
+    let csvFilePath = '/Users/mukesh/Office/Tools/Solr/solr-7.5.0/nypost/URLtoHTML_nypost.csv';
+    const csv = require('csvtojson')
+    csv({ delimiter: [","] })
+        .fromFile(csvFilePath)
+        .then((jsonObj) => {
+            console.log(jsonObj);
+            res.send((jsonObj));
+        })
+});
+
 
 app.use('/api/getresult/', (req, res) => {
 
     let strQuery = client.query().q(req.query.keyword);
+    console.log('rreq.query.sort', req.query.sort)
     if (req.query.sort && req.query.sort.length > 0) {
         strQuery.sort({ pageRankFile: 'desc' })
     }

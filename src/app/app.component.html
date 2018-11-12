@@ -22,18 +22,21 @@
         <div style="margin-top: 1rem;" class=" col-sm-10 row entertainment">
           <legend class="entertainment col-form-label entertainment">Select Ranking Type<span class="required" style="color:red;">*</span>
 
-            <div class="col-sm-6 entertainment" style="float: right;">
-              <div class="form-check entertainment">
-                <input class="entertainment form-check-input" name="is_user_input" [(ngModel)]="form.isUserInput" type="radio"
+            <div class="col-sm-6 entertainment" style="float: right; ">
+
+              <div style="float: left;   " class="form-check entertainment">
+                <input class="form-check-input entertainment" [(ngModel)]="form.isUserInput" name="is_user_input" type="radio"
                   checked [value]="false">
+                <label class="entertainment form-check-label" for="other">Lucene</label>
+              </div>
+
+              <div class="form-check entertainment" style="float: left;  padding-left: 30%;">
+                <input class="entertainment form-check-input" name="is_user_input" [(ngModel)]="form.isUserInput" type="radio"
+                  [value]="true">
                 <label class="form-check-label entertainment " for="here">PageRank</label>
               </div>
 
-              <div style="float: right;margin-top: -25px;" class="form-check entertainment">
-                <input class="form-check-input entertainment" [(ngModel)]="form.isUserInput" name="is_user_input" type="radio"
-                  [value]="true">
-                <label class="entertainment form-check-label" for="other">Lucene</label>
-              </div>
+
 
             </div>
           </legend>
@@ -50,7 +53,7 @@
   </div>
 </div>
 
-<div class="alert alert-warning" role="alert" *ngIf="!searchResponse">No records.</div>
+<div class="alert alert-warning" role="alert" *ngIf="!searchResponse && this.searchFinished">No records.</div>
 <div id="info-div" *ngIf="searchResponse && searchResponse.docs.length>0" class="table-responsive container">
   <div style="margin-left: 1%;">Results 1 - {{show}} of {{searchResponse.numFound}}</div>
   <div style="margin-left: 1%;">Query - <b>{{stats.params.q}}</b> {{stats.QTime}} ms</div>
@@ -60,20 +63,16 @@
       <tbody>
         <tr *ngIf="docInfo.title">
           <td>
-            Results : <a href=""> {{docInfo.title[0]}}</a>
+            Title : <a href="" target="_blank"> {{docInfo.title[0]}}</a>
           </td>
         </tr>
-        <tr *ngIf="docInfo.title">
+
+        <tr *ngIf="docInfo.generator">
           <td>
-            Title : <a href=""> {{docInfo.title[0]}}</a>
+            URL : <a href="{{docInfo.generator[0]}}" target="_blank"> {{docInfo.generator[0]}}</a>
           </td>
         </tr>
-        <tr *ngIf="docInfo.og_url">
-          <td>
-            URL : <a href=""> {{docInfo.og_url[0]}}</a>
-          </td>
-        </tr>
-        <tr *ngIf="!docInfo.og_url">
+        <tr *ngIf="!docInfo.generator">
           <td>
             URL : N/A
           </td>
@@ -86,6 +85,12 @@
         <tr *ngIf="docInfo.description">
           <td>
             Description : {{docInfo.description[0]}}
+          </td>
+        </tr>
+
+        <tr *ngIf="!docInfo.description">
+          <td>
+            Description : N/A
           </td>
         </tr>
       </tbody>
