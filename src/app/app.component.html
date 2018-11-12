@@ -38,7 +38,7 @@
             </div>
           </legend>
         </div>
-        <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple"><p style="font-size: 20px; color: white">Mapping URL to HTML...</p></ngx-spinner>
+        <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple"><p style="font-size: 20px; color: white">Mapping Doc ID to URL...</p></ngx-spinner>
         <div style="margin-top: 2rem;" class="form-group entertainment row" id="search-btn-group">
           <div class="col-sm-8 entertainment">
             <button type="submit" class="btn btn-primary" id="search-btn" [disabled]="form.invalid || keyword.invalid">
@@ -54,39 +54,39 @@
 <div id="info-div" *ngIf="searchResponse && searchResponse.docs.length>0" class="table-responsive container">
   <div style="margin-left: 1%;">Results 1 - {{show}} of {{searchResponse.numFound}}</div>
   <div style="margin-left: 1%;">Query - <b>{{stats.params.q}}</b> {{stats.QTime}} ms</div>
-  <div [@CustomeFadeInAnimation] style="padding-left: 1%;" class="card card-block  bg-faded  bg-light cardStyl  carousel slide  carousel-fade"
+  <div [@CustomeFadeInAnimation] style="padding-left: 1%;" class="card-block  bg-faded  bg-light cardStyl  carousel slide  carousel-fade"
     *ngFor="let docInfo of searchResponse.docs | slice:0:show let i=index ">
     <table class="table">
       <tbody>
         <tr *ngIf="docInfo.title">
-          <td>
+          <td style="padding: 0;">
             Title : <a href="" target="_blank"> {{docInfo.title[0]}}</a>
           </td>
         </tr>
 
         <tr *ngIf="docInfo.generator">
-          <td>
+          <td style="padding: 0;">
             URL : <a href="{{docInfo.generator[0]}}" target="_blank"> {{docInfo.generator[0]}}</a>
           </td>
         </tr>
         <tr *ngIf="!docInfo.generator">
-          <td>
+          <td style="padding: 0;">
             URL : N/A
           </td>
         </tr>
         <tr *ngIf="docInfo.id">
-          <td> ID : {{docInfo.id}}
+          <td style="padding: 0;"> ID : {{docInfo.id}}
           </td>
         </tr>
 
         <tr *ngIf="docInfo.description">
-          <td>
+          <td style="padding: 0;">
             Description : {{docInfo.description[0]}}
           </td>
         </tr>
 
         <tr *ngIf="!docInfo.description">
-          <td>
+          <td style="padding: 0;">
             Description : N/A
           </td>
         </tr>
