@@ -3,6 +3,7 @@ import { SearchForm } from './SearchForm';
 import { ResultService } from './result.service';
 import { HttpClient } from '@angular/common/http';
 import { CustomeFadeInAnimation } from './CustomeFadeInAnimation';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 
 @Component({
@@ -41,6 +42,7 @@ export class AppComponent {
   urlToHtmlMap: Map<string, string> = new Map<string, string>();
 
   ngOnInit() {
+    this.spinner.show();
     this.getURl2HTML();
 
   }
@@ -52,7 +54,9 @@ export class AppComponent {
       data.forEach(element => {
         this.urlToHtmlMap.set(element.docid, element.url);
       });
-      console.log(this.urlToHtmlMap);
+      setTimeout(() => {
+        this.spinner.hide();
+      }, 5000);
     });
   }
 
@@ -60,8 +64,10 @@ export class AppComponent {
     return this.urlToHtmlMap.get(id);
   }
 
-  constructor(private service: ResultService,
-    private http: HttpClient) {
+  constructor(
+    private service: ResultService,
+    private http: HttpClient,
+    private spinner: NgxSpinnerService) {
   }
 
   onSubmit() {

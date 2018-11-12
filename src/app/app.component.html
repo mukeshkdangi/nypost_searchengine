@@ -35,13 +35,10 @@
                   [value]="true">
                 <label class="form-check-label entertainment " for="here">PageRank</label>
               </div>
-
-
-
             </div>
           </legend>
         </div>
-
+        <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple"><p style="font-size: 20px; color: white">Mapping URL to HTML...</p></ngx-spinner>
         <div style="margin-top: 2rem;" class="form-group entertainment row" id="search-btn-group">
           <div class="col-sm-8 entertainment">
             <button type="submit" class="btn btn-primary" id="search-btn" [disabled]="form.invalid || keyword.invalid">

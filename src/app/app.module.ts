@@ -10,6 +10,7 @@ import {
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ResultService } from './result.service';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 
 @NgModule({
@@ -19,7 +20,7 @@ import { ResultService } from './result.service';
 
   imports:
     [
-      HttpClientModule,
+      HttpClientModule,NgxSpinnerModule,
       ReactiveFormsModule, MatFormFieldModule, MatInputModule,
       MatAutocompleteModule, MatOptionModule, BrowserAnimationsModule,
       BrowserModule, FormsModule
