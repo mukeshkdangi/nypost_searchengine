@@ -9,14 +9,22 @@
           <h3 style="text-align: center;">New York Post Search Engine</h3>
         </div>
 
-        <div class=" col-sm-10 row entertainment">
-          <legend class="entertainment col-form-label entertainment">Keyword<span class="required" style="color:red;">*</span>
-            <input style="float: right" class="col-sm-10" name="locationDescription" [ngClass]="{'form-control': true, 'is-invalid': keyword.invalid && (keyword.dirty || keyword.touched)}"
-              type="text" required noWhitespace id="locationDescription" placeholder="Enter a Keyword" [(ngModel)]="form.keyword"
-              #keyword="ngModel">
-            <div style="float: right" class="entertainment invalid-feedback">Please enter a keyword </div>
-          </legend>
+        <div class="form-group row entertainment">
+        <label for="keyword" class="entertainment col-sm-2 col-form-label entertainment">Keyword <span class="required"
+            style="color:red;">*</span></label>
+        <div class="col-sm-8 entertainment">
+          <input pattern="[a-zA-Z ]*" placeholder="Enter Artist, Team or Event Name(eg. Lakers)" matInput [matAutocomplete]="auto"
+            (keydown)="searchAutoCompelete($event)" [ngClass]="{'form-control': true, 'is-invalid': keyword.invalid && (keyword.dirty || keyword.touched)}"
+            type="text" name="keyword" id="keyword" required noWhitespace [(ngModel)]="form.keyword" #keyword="ngModel">
+          <div class="invalid-feedback entertainment">Please enter a keyword.</div>
         </div>
+      </div>
+
+      <mat-autocomplete #auto="matAutocomplete" >
+        <mat-option *ngFor="let suggest of keywordList " [value]="suggest" >
+          {{suggest}}
+        </mat-option>
+      </mat-autocomplete>
 
 
         <div style="margin-top: 1rem;" class=" col-sm-10 row entertainment">
@@ -48,11 +56,14 @@
       </form>
     </div>
   </div>
+  
 </div>
 
-<div class="alert alert-warning" role="alert" *ngIf="!searchResponse && this.searchFinished">No records.</div>
+<div  *ngIf="correctSpell" style="width: 55%;margin: auto 239px;" class="alert alert-info col-sm-10 row entertainment"><div class=" col-sm-10 row entertainment" > Did you mean &nbsp;&nbsp;&nbsp;  <div style="text-decoration: underline;font-style: italic;font-weight: bold;color: blue;cursor: pointer;" (click)="form.keyword=correctSpell; onSubmit();"> {{correctSpell}} </div></div></div>
+<div style="width: 55%;margin: auto 239px;" class="alert alert-warning col-sm-10 row entertainment" role="alert" *ngIf="searchResponse && searchResponse.numFound==0 && this.searchFinished">No records.</div>
 <div id="info-div" *ngIf="searchResponse && searchResponse.docs.length>0" class="table-responsive container">
   <div style="margin-left: 1%;">Results 1 - {{show}} of {{searchResponse.numFound}}</div>
+  
   <div style="margin-left: 1%;">Query - <b>{{stats.params.q}}</b> {{stats.QTime}} ms</div>
   <div [@CustomeFadeInAnimation] style="padding-left: 1%;" class="card-block  bg-faded  bg-light cardStyl  carousel slide  carousel-fade"
     *ngFor="let docInfo of searchResponse.docs | slice:0:show let i=index ">
@@ -90,6 +101,21 @@
             Description : N/A
           </td>
         </tr>
+
+
+        <tr *ngIf="docInfo.stream_content_type">
+          <td style="padding: 0;">
+            Snippet : {{docInfo.stream_content_type[0]}}
+          </td>
+        </tr>
+
+        <tr *ngIf="!docInfo.stream_content_type">
+          <td style="padding: 0;">
+            Snippet : N/A
+          </td>
+        </tr>
+
+
       </tbody>
     </table>
   </div>

@@ -4,6 +4,7 @@ import { ResultService } from './result.service';
 import { HttpClient } from '@angular/common/http';
 import { CustomeFadeInAnimation } from './CustomeFadeInAnimation';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subject } from 'rxjs';
 
 
 @Component({
@@ -36,8 +37,14 @@ export class AppComponent {
   searchResponse: any
   stats: any
   searchFinished: any
-
+  public keywordList: string[];
+  public typedKeyword: string;
+  public lastKeyPress: number = 0;
+  public eventKey = new Subject();
+  public correctSpell: string
   public show: number = 10;
+  isSpellMistake: boolean
+  matchedSubstring: string
 
   urlToHtmlMap: Map<string, string> = new Map<string, string>();
 
@@ -70,9 +77,57 @@ export class AppComponent {
     private spinner: NgxSpinnerService) {
   }
 
+  searchAutoCompelete($event) {
+    this.keywordList = [];
+    if ($event.timeStamp - this.lastKeyPress > 100) {
+      this.eventKey.next($event.target.value);
+      this.typedKeyword = $event.target.value;
+      if (this.typedKeyword.length > 0) {
+        this.getTicketMasterAPISuggestion();
+      }
+    }
+    this.lastKeyPress = $event.timeStamp;
+  }
+
+  getSpellingSuggestion(value) {
+    this.url = '/api/spellcorrect?keyword=' + value.toLowerCase();
+    this.service.url = this.url;
+    console.log('hitting url ..', this.service.url)
+    this.http.get<any>(this.url).subscribe(data => {
+      this.correctSpell = data.word;
+      console.log('tempSthis.typedKeywordpell 1', value.toLowerCase());
+      if (this.correctSpell) {
+        if (this.correctSpell === value) {
+          this.correctSpell = undefined;
+        }
+      }
+    });
+  }
+
+  getTicketMasterAPISuggestion() {
+    this.typedKeyword = this.typedKeyword.toLowerCase()
+    let intial = this.typedKeyword.substring(0, this.typedKeyword.lastIndexOf(" ") + 1);
+    let last = this.typedKeyword.substring(this.typedKeyword.lastIndexOf(" ") + 1, this.typedKeyword.length);
+
+    this.url = '/api/suggest?keyword=' + last;
+    this.service.url = this.url;
+    console.log('hitting url ..', this.service.url)
+    this.http.get<any>(this.url).subscribe(data => {
+      let suggestResponse = data;
+      suggestResponse.suggest.suggest[last].suggestions.forEach(element => {
+        let term = element.term
+        if (term)
+          this.keywordList.push(intial + term);
+      });;
+    });
+  }
+
   onSubmit() {
+    this.isSpellMistake = false;
+    this.correctSpell = undefined;
+    this.getSpellingSuggestion(this.form.keyword)
     this.searchFinished = false;
-    this.url = '/api/getresult?keyword=' + this.form.keyword + '&rows=50';
+    this.url = '/api/getresult?keyword=' + this.form.keyword + '&rows=10';
 
     console.log('form is ', this.form)
     if (this.form.isUserInput) {
@@ -95,7 +150,37 @@ export class AppComponent {
       console.log(this.searchResponse)
       this.searchFinished = true;
     });
+
   }
+
+  getSnippet(value) {
+    this.url = '/api/snippet?file=' + value;
+    this.service.url = this.url;
+    console.log('hitting url ..', this.service.url)
+    this.http.get<any>(this.url).subscribe(data => {
+      let suggestResponse = data.data;
+      let matced = suggestResponse.match(this.form.keyword)
+      if (matced && matced.length > 0) {
+        let min = suggestResponse.length > matced.index - 80 ? matced.index - 80 : 0;
+        let max = suggestResponse.length > matced.index + 80 ? matced.index + 80 : suggestResponse.length;
+        this.matchedSubstring = '...' + suggestResponse.substring(min, max) + '...';
+      } else {
+        let allWords = this.form.keyword.split(" ");
+        for (let idx = 0; idx < allWords.length; idx++) {
+          let len = 160 / allWords.length
+          matced = suggestResponse.match(allWords[idx]);
+          if (matced && matced.length > 0) {
+            let min = suggestResponse.length > matced.index - len ? matced.index - len : 0;
+            let max = suggestResponse.length > matced.index + len ? matced.index + len : suggestResponse.length;
+            this.matchedSubstring += '...' + suggestResponse.substring(min, max) + '...';
+
+          }
+        }
+      }
+    });
+  }
+
+
 
   updateAttractionId($event) {
   }
