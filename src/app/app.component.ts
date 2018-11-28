@@ -90,6 +90,7 @@ export class AppComponent {
   }
 
   getSpellingSuggestion(value) {
+    value  = value.replace(/ +(?= )/g,'');
     this.url = '/api/spellcorrect?keyword=' + value.toLowerCase();
     this.service.url = this.url;
     console.log('hitting url ..', this.service.url)
@@ -97,7 +98,7 @@ export class AppComponent {
       this.correctSpell = data.word;
       console.log('tempSthis.typedKeywordpell 1', value.toLowerCase());
       if (this.correctSpell) {
-        if (this.correctSpell === value) {
+        if (this.correctSpell === value.toLowerCase()) {
           this.correctSpell = undefined;
         }
       }
@@ -107,7 +108,9 @@ export class AppComponent {
   getTicketMasterAPISuggestion() {
     this.typedKeyword = this.typedKeyword.toLowerCase()
     let intial = this.typedKeyword.substring(0, this.typedKeyword.lastIndexOf(" ") + 1);
+    intial = intial.replace(/ +(?= )/g,'');
     let last = this.typedKeyword.substring(this.typedKeyword.lastIndexOf(" ") + 1, this.typedKeyword.length);
+    last = last.replace(/ +(?= )/g,'');
 
     this.url = '/api/suggest?keyword=' + last;
     this.service.url = this.url;
@@ -127,6 +130,7 @@ export class AppComponent {
     this.correctSpell = undefined;
     this.getSpellingSuggestion(this.form.keyword)
     this.searchFinished = false;
+    this.form.keyword = this.form.keyword.replace(/ +(?= )/g,'');
     this.url = '/api/getresult?keyword=' + this.form.keyword + '&rows=10';
 
     console.log('form is ', this.form)
@@ -172,7 +176,7 @@ export class AppComponent {
           if (matced && matced.length > 0) {
             let min = suggestResponse.length > matced.index - len ? matced.index - len : 0;
             let max = suggestResponse.length > matced.index + len ? matced.index + len : suggestResponse.length;
-            this.matchedSubstring = this.matchedSubstring ? this.matchedSubstring + '...' + suggestResponse.substring(min, max) + '...' : '...' + suggestResponse.substring(min, max) + '...';
+            this.matchedSubstring = this.matchedSubstring==undefined ?  '...' + suggestResponse.substring(min, max) + '...' : this.matchedSubstring +'...' + suggestResponse.substring(min, max) + '...';
 
           }
         }
