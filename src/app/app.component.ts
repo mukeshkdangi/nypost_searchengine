@@ -172,7 +172,7 @@ export class AppComponent {
           if (matced && matced.length > 0) {
             let min = suggestResponse.length > matced.index - len ? matced.index - len : 0;
             let max = suggestResponse.length > matced.index + len ? matced.index + len : suggestResponse.length;
-            this.matchedSubstring += '...' + suggestResponse.substring(min, max) + '...';
+            this.matchedSubstring = this.matchedSubstring ? this.matchedSubstring + '...' + suggestResponse.substring(min, max) + '...' : '...' + suggestResponse.substring(min, max) + '...';
 
           }
         }
