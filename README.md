@@ -2,7 +2,7 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.5.
 
-# Demo
+## Demo
 ![Nypost Search Engine](https://github.com/mukeshkdangi/nypost-searchengine/blob/master/ezgif.com-gif-maker.gif)
 
 ## Development server
